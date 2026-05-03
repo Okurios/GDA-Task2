@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GDA Sports - My Cart</title>
+    <style>
+        body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; margin:0; padding:0; background:#f9f9f9; }
+        .cart-page-container { padding:40px 50px; max-width:960px; margin:auto; }
+        h1 { color:#004b93; margin-bottom:20px; }
+        #msg-box { display:none; padding:12px; border-radius:6px; margin-bottom:20px; font-weight:bold; text-align:center; }
+        .cart-table { width:100%; border-collapse:collapse; margin-bottom:20px; background:#fff; }
+        .cart-table th, .cart-table td { padding:13px 15px; border:1px solid #ddd; text-align:left; font-size:14px; }
+        .cart-table th { background:#004b93; color:#fff; }
+        .cart-table tr:hover { background:#f8f8f8; }
+        .qty-controls { display:flex; align-items:center; gap:6px; }
+        .qty-btn { width:28px; height:28px; border:1px solid #004b93; background:#fff; color:#004b93; border-radius:4px; cursor:pointer; font-size:16px; font-weight:bold; line-height:1; }
+        .qty-btn:hover { background:#004b93; color:#fff; }
+        .qty-num { min-width:24px; text-align:center; font-weight:bold; }
+        .delete-btn { color:#e60000; cursor:pointer; border:none; background:none; font-size:16px; }
+        .total-box { text-align:right; font-size:22px; font-weight:bold; margin-bottom:20px; color:#004b93; }
+        .payment-section { background:#f0f4fa; padding:20px; border-radius:8px; }
+        .payment-section h3 { margin-top:0; color:#004b93; }
+        .payment-section label { display:block; margin:8px 0; cursor:pointer; font-size:15px; }
+        .checkout-btn { background:#28a745; color:#fff; padding:14px 30px; border:none; cursor:pointer; font-size:17px; width:100%; border-radius:5px; margin-top:15px; font-weight:bold; }
+        .checkout-btn:hover { background:#218838; }
+        .nav-bar { background:#004b93; padding:12px 50px; display:flex; align-items:center; gap:20px; }
+        .nav-bar a { color:#fff; text-decoration:none; font-size:14px; font-weight:bold; }
+        .nav-bar a:hover { text-decoration:underline; }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="dashboard-v2.html">🏠 Back to Shop</a>
+        <a href="profile-v2.html">👤 Profile</a>
+    </div>
+
+    <div class="cart-page-container">
+        <h1>Shopping Cart 🛒</h1>
+        <div id="msg-box"></div>
+
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Size</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody id="cart-table-body"></tbody>
+        </table>
+
+        <div class="total-box">Total: <span id="cart-total-price">€ 0.00</span></div>
+
+        <div class="payment-section">
+            <h3>Payment Method</h3>
+            <label><input type="radio" name="payment" value="card" checked> 💳 Credit / Debit Card</label>
+            <label><input type="radio" name="payment" value="paypal"> 🅿️ PayPal</label>
+            <label><input type="radio" name="payment" value="cash"> 💵 Cash on Delivery</label>
+            <button class="checkout-btn" onclick="completeOrder()">✅ Complete Purchase</button>
+        </div>
+    </div>
+
+    <script src="cart-v2.js"></script>
+</body>
+</html>

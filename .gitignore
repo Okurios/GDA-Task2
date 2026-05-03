@@ -1,0 +1,14 @@
+# Node dependencies
+node_modules/
+
+# SQLite database (auto-generated on first run)
+backend/gda.db
+backend/gda.db-shm
+backend/gda.db-wal
+
+# Environment variables
+.env
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,19 @@
+{
+  "name": "gda-sports-backend",
+  "version": "1.0.0",
+  "description": "GDA Sports Shop - Full Backend with Express + SQLite",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^8.0.7",
+    "sql.js": "^1.12.0"
+  }
+}

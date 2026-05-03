@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GDA Sports - Admin Dashboard</title>
+    <style>
+        *{box-sizing:border-box;}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;margin:0;padding:0;background:#f0f4fa;}
+        .nav-bar{background:#1a1a2e;padding:14px 40px;display:flex;align-items:center;justify-content:space-between;}
+        .nav-bar .brand{color:#fff;font-size:18px;font-weight:bold;}
+        .nav-bar a{color:#aac4ff;text-decoration:none;font-size:13px;font-weight:bold;margin-left:20px;}
+        .nav-bar a:hover{color:#fff;}
+        .page{max-width:1200px;margin:24px auto;padding:0 20px;}
+        /* Stats */
+        .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px;}
+        .stat-card{background:#fff;border-radius:10px;padding:22px;box-shadow:0 2px 10px rgba(0,0,0,0.06);text-align:center;}
+        .stat-card .val{font-size:32px;font-weight:bold;color:#004b93;}
+        .stat-card .lbl{font-size:13px;color:#888;margin-top:4px;}
+        /* Tabs */
+        .tabs{display:flex;gap:0;margin-bottom:0;border-bottom:2px solid #004b93;}
+        .tab-btn{padding:11px 26px;border:none;background:transparent;color:#555;font-size:14px;font-weight:bold;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;}
+        .tab-btn.active{color:#004b93;border-bottom:3px solid #004b93;}
+        .tab-btn:hover{color:#004b93;}
+        .tab-content{display:none;background:#fff;border-radius:0 0 10px 10px;padding:24px;box-shadow:0 2px 10px rgba(0,0,0,0.06);}
+        .tab-content.active{display:block;}
+        /* Tables */
+        table{width:100%;border-collapse:collapse;font-size:14px;}
+        th,td{padding:11px 14px;border-bottom:1px solid #eee;text-align:left;}
+        th{background:#f4f8ff;color:#004b93;font-weight:bold;}
+        tr:hover td{background:#f9fbff;}
+        /* Buttons */
+        .btn{padding:7px 14px;border:none;border-radius:5px;cursor:pointer;font-size:13px;font-weight:bold;}
+        .btn-edit{background:#004b93;color:#fff;}
+        .btn-edit:hover{background:#003570;}
+        .btn-del{background:#e60000;color:#fff;}
+        .btn-del:hover{background:#b30000;}
+        .btn-green{background:#28a745;color:#fff;}
+        .btn-green:hover{background:#1e7e34;}
+        .btn-gray{background:#6c757d;color:#fff;}
+        .btn-gray:hover{background:#545b62;}
+        /* Form panel */
+        .form-panel{background:#f4f8ff;border:1px solid #d0e0ff;border-radius:8px;padding:22px;margin-top:20px;}
+        .form-panel h4{margin:0 0 16px;color:#004b93;}
+        .fg{margin-bottom:12px;}
+        .fg label{display:block;font-size:12px;font-weight:bold;color:#555;margin-bottom:3px;}
+        .fg input,.fg select{width:100%;padding:8px 10px;border:1px solid #ccc;border-radius:5px;font-size:13px;}
+        .fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+        .fg-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+        .msg-box{display:none;padding:10px 14px;border-radius:6px;margin-top:12px;font-size:13px;font-weight:bold;}
+        .msg-ok{background:#e0ffe0;color:#060;border:1px solid #060;}
+        .msg-err{background:#ffe0e0;color:#c00;border:1px solid #c00;}
+        #loading-overlay{text-align:center;padding:40px;color:#666;}
+        .badge-admin{background:#004b93;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;}
+        .badge-user{background:#e0e0e0;color:#444;padding:2px 8px;border-radius:10px;font-size:11px;}
+    </style>
+</head>
+<body>
+<div class="nav-bar">
+    <span class="brand">⚙️ GDA Admin</span>
+    <div>
+        <a href="dashboard-v2.html">🏠 Shop</a>
+        <a href="profile-v2.html">👤 Profile</a>
+        <a href="#" onclick="logout()">🚪 Logout</a>
+    </div>
+</div>
+
+<div class="page">
+    <div class="stats">
+        <div class="stat-card"><div class="val" id="s-users">—</div><div class="lbl">Registered Users</div></div>
+        <div class="stat-card"><div class="val" id="s-orders">—</div><div class="lbl">Total Orders</div></div>
+        <div class="stat-card"><div class="val" id="s-products">—</div><div class="lbl">Products</div></div>
+        <div class="stat-card"><div class="val" id="s-revenue">—</div><div class="lbl">Total Revenue (€)</div></div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('products',this)">📦 Products</button>
+        <button class="tab-btn"        onclick="switchTab('users',this)">👥 Users</button>
+        <button class="tab-btn"        onclick="switchTab('orders',this)">📋 Orders</button>
+    </div>
+
+    <!-- ── PRODUCTS TAB ───────────────────────────────────────────────────── -->
+    <div id="tab-products" class="tab-content active">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+            <strong style="font-size:16px;color:#004b93;">All Products</strong>
+            <button class="btn btn-green" onclick="showProductForm()">+ Add Product</button>
+        </div>
+        <div id="products-loading">Loading...</div>
+        <table id="products-table" style="display:none;">
+            <thead><tr><th>#</th><th>Name</th><th>Brand</th><th>Category</th><th>Price</th><th>Sizes</th><th>Stock</th><th>Actions</th></tr></thead>
+            <tbody id="products-tbody"></tbody>
+        </table>
+
+        <div id="product-form-panel" class="form-panel" style="display:none;">
+            <h4 id="pf-title">Add New Product</h4>
+            <input type="hidden" id="pf-id">
+            <div class="fg-row">
+                <div class="fg"><label>Name *</label><input id="pf-name" placeholder="Product name"></div>
+                <div class="fg"><label>Brand *</label><input id="pf-brand" placeholder="e.g. Nike"></div>
+            </div>
+            <div class="fg-row3">
+                <div class="fg"><label>Category *</label>
+                    <select id="pf-category">
+                        <option value="shoes">Shoes</option>
+                        <option value="clothing">Clothing</option>
+                    </select>
+                </div>
+                <div class="fg"><label>Price (€) *</label><input id="pf-price" type="number" step="0.01" min="0" placeholder="0.00"></div>
+                <div class="fg"><label>Stock</label><input id="pf-stock" type="number" min="0" placeholder="100"></div>
+            </div>
+            <div class="fg-row">
+                <div class="fg"><label>Image filename</label><input id="pf-image" placeholder="image 1.webp"></div>
+                <div class="fg"><label>Sizes (comma-separated)</label><input id="pf-sizes" placeholder="S,M,L,XL or 38,39,40"></div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:6px;">
+                <button class="btn btn-green" onclick="submitProduct()">💾 Save</button>
+                <button class="btn btn-gray"  onclick="hideProductForm()">Cancel</button>
+            </div>
+            <div class="msg-box" id="pf-msg"></div>
+        </div>
+    </div>
+
+    <!-- ── USERS TAB ──────────────────────────────────────────────────────── -->
+    <div id="tab-users" class="tab-content">
+        <div id="users-loading">Loading...</div>
+        <table id="users-table" style="display:none;">
+            <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead>
+            <tbody id="users-tbody"></tbody>
+        </table>
+        <div class="msg-box" id="users-msg" style="margin-top:14px;"></div>
+    </div>
+
+    <!-- ── ORDERS TAB ─────────────────────────────────────────────────────── -->
+    <div id="tab-orders" class="tab-content">
+        <div id="orders-loading">Loading...</div>
+        <table id="orders-table" style="display:none;">
+            <thead><tr><th>#</th><th>Customer</th><th>Email</th><th>Payment</th><th>Total</th><th>Date</th><th>Items</th></tr></thead>
+            <tbody id="orders-tbody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script src="admin-v2.js"></script>
+</body>
+</html>

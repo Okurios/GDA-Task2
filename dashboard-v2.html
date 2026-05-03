@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GDA Sports - Shop Floor</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; margin:0; padding:0; background:#fff; }
+
+        /* ── Header ─────────────────────────────────────────────────────────── */
+        .header { display:flex; justify-content:space-between; align-items:center;
+                  max-width:1400px; margin:0 auto; padding:16px 20px; border-bottom:1px solid #eee; }
+        .header-left { display:flex; align-items:center; gap:12px; }
+        .header-left h2 { margin:0; font-size:18px; color:#004b93; }
+        .search-container { flex-grow:1; max-width:380px; margin:0 30px; }
+        .search-container input { width:100%; padding:9px 15px; border:1px solid #ccc;
+                                   border-radius:20px; outline:none; font-size:14px; }
+        .header-right { display:flex; align-items:center; gap:16px; }
+        .nav-link { color:#004b93; font-weight:bold; text-decoration:none; font-size:14px; white-space:nowrap; }
+        .nav-link:hover { text-decoration:underline; }
+        #admin-link { display:none; }
+        .cart-container { font-size:22px; cursor:pointer; position:relative; }
+        #cart-count { position:absolute; top:-8px; right:-10px; background:#e60000; color:#fff;
+                      font-size:11px; font-weight:bold; padding:2px 5px; border-radius:50%; }
+        .logout-btn { background:#e60000; color:#fff; border:none; padding:8px 16px;
+                      border-radius:4px; cursor:pointer; font-weight:bold; font-size:14px; }
+
+        /* ── Hamburger (mobile only) ─────────────────────────────────────────── */
+        .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer;
+                     background:none; border:none; padding:4px; }
+        .hamburger span { display:block; width:24px; height:3px; background:#004b93; border-radius:2px; transition:0.3s; }
+
+        /* ── Mobile nav overlay ──────────────────────────────────────────────── */
+        .mobile-nav { display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+                      background:rgba(0,0,0,0.85); z-index:1000; flex-direction:column;
+                      align-items:center; justify-content:center; gap:28px; }
+        .mobile-nav.open { display:flex; }
+        .mobile-nav a, .mobile-nav button { color:#fff; font-size:22px; font-weight:bold;
+                         text-decoration:none; background:none; border:none; cursor:pointer; }
+        .mobile-nav a:hover, .mobile-nav button:hover { color:#f5a623; }
+        .mobile-close { position:absolute; top:20px; right:24px; font-size:32px; color:#fff;
+                        cursor:pointer; background:none; border:none; }
+
+        /* ── Controls bar ────────────────────────────────────────────────────── */
+        .controls-bar { display:flex; justify-content:space-between; align-items:center;
+                        max-width:1400px; margin:12px auto; padding:10px 20px;
+                        background:#f4f4f4; border-radius:8px; flex-wrap:wrap; gap:10px; }
+        .filter-btn { border:none; background:transparent; padding:7px 14px; font-weight:bold;
+                      color:#666; cursor:pointer; border-radius:20px; font-size:13px; }
+        .filter-btn.active, .filter-btn:hover { background:#004b93; color:#fff; }
+        .sort-box select { padding:6px 10px; border-radius:4px; border:1px solid #ccc; font-size:13px; }
+        .adv-toggle-btn { background:#fff; border:2px solid #004b93; color:#004b93; padding:7px 16px;
+                          border-radius:20px; cursor:pointer; font-weight:bold; font-size:13px;
+                          display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; white-space:nowrap; }
+        .adv-toggle-btn:hover { background:#e8f0fb; }
+        .adv-toggle-btn.has-filters { background:#004b93; color:#fff; }
+        .filter-badge { background:#e60000; color:#fff; border-radius:50%; width:18px; height:18px;
+                        font-size:11px; display:inline-flex; align-items:center; justify-content:center;
+                        font-weight:bold; margin-left:2px; }
+
+        /* ── Advanced filter panel ───────────────────────────────────────────── */
+        .adv-panel { display:none; max-width:1400px; margin:0 auto 8px; padding:16px 20px;
+                     background:#f4f8ff; border:1px solid #d0e4f7; border-radius:0 0 10px 10px;
+                     flex-wrap:wrap; gap:18px; align-items:flex-end; }
+        .adv-panel.open { display:flex; }
+        .adv-section { display:flex; flex-direction:column; gap:8px; min-width:160px; }
+        .adv-section label { font-weight:bold; font-size:12px; color:#555; text-transform:uppercase;
+                             letter-spacing:0.5px; }
+        .adv-chips { display:flex; flex-wrap:wrap; gap:6px; }
+        .chip { border:1px solid #ccc; background:#fff; padding:5px 12px; border-radius:20px;
+                font-size:12px; cursor:pointer; transition:all 0.15s; }
+        .chip:hover { border-color:#004b93; color:#004b93; }
+        .chip.active { background:#004b93; color:#fff; border-color:#004b93; }
+        .price-inputs { display:flex; align-items:center; gap:8px; }
+        .price-inputs input { width:74px; padding:5px 8px; border:1px solid #ccc; border-radius:4px;
+                              font-size:13px; text-align:center; }
+        .price-inputs input:focus { border-color:#004b93; outline:none; }
+        .adv-actions { display:flex; align-items:flex-end; gap:10px; margin-left:auto; }
+        .btn-apply { background:#004b93; color:#fff; border:none; padding:8px 20px;
+                     border-radius:4px; cursor:pointer; font-weight:bold; font-size:13px; }
+        .btn-apply:hover { background:#003570; }
+        .btn-clear { background:transparent; color:#e60000; border:1px solid #e60000;
+                     padding:8px 16px; border-radius:4px; cursor:pointer; font-size:13px; }
+        .btn-clear:hover { background:#ffe0e0; }
+        .instock-label { display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer; }
+        .instock-label input[type=checkbox] { width:16px; height:16px; accent-color:#004b93; cursor:pointer; }
+
+        /* ── Products grid ───────────────────────────────────────────────────── */
+        .products-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:20px;
+                         max-width:1400px; margin:0 auto; padding:0 20px 40px; }
+
+        .product-card { display:flex; flex-direction:column; position:relative; }
+        .image-box { background:#f4f4f4; aspect-ratio:1/1; display:flex; align-items:center;
+                     justify-content:center; margin-bottom:10px; border-radius:4px; overflow:hidden; }
+        .image-box img { max-width:80%; max-height:80%; object-fit:contain; mix-blend-mode:multiply; }
+
+        /* Heart button */
+        .wish-btn { position:absolute; top:8px; right:8px; background:rgba(255,255,255,0.85);
+                    border:none; border-radius:50%; width:34px; height:34px; font-size:18px;
+                    cursor:pointer; display:flex; align-items:center; justify-content:center;
+                    box-shadow:0 1px 4px rgba(0,0,0,0.15); transition:transform 0.15s; }
+        .wish-btn:hover { transform:scale(1.2); }
+
+        .brand-name  { color:#004b93; font-weight:bold; font-size:14px; }
+        .product-title { font-size:13px; margin:4px 0 8px; color:#333; min-height:38px; }
+        .price { font-size:16px; font-weight:bold; color:#004b93; margin-bottom:6px; }
+        .stock-low { font-size:12px; color:#e60000; font-weight:bold; margin-bottom:4px; }
+        .size-select { width:100%; padding:6px 8px; border:1px solid #ccc; border-radius:4px;
+                       font-size:13px; margin-bottom:6px; cursor:pointer; }
+        .size-select:focus { border-color:#004b93; outline:none; }
+        .add-btn { background:#004b93; color:#fff; border:none; padding:8px; border-radius:4px;
+                   cursor:pointer; font-size:13px; margin-bottom:4px; }
+        .add-btn:hover:not(:disabled) { background:#003570; }
+        .remove-btn { background:transparent; color:#e60000; border:1px solid #e60000;
+                      padding:6px; border-radius:4px; cursor:pointer; font-size:12px; }
+        .remove-btn:hover { background:#ffe0e0; }
+
+        #loading-msg { text-align:center; padding:60px; font-size:18px; color:#666; grid-column:1/-1; }
+
+        /* ── Toast ───────────────────────────────────────────────────────────── */
+        #toast-container { position:fixed; bottom:24px; right:24px; z-index:9999;
+                           display:flex; flex-direction:column; gap:10px; }
+        .toast { padding:13px 18px; border-radius:8px; font-size:14px; font-weight:bold; color:#fff;
+                 min-width:260px; max-width:360px; box-shadow:0 4px 16px rgba(0,0,0,0.18);
+                 opacity:0; transform:translateX(40px); animation:slideIn 0.3s forwards; }
+        .toast.success { background:#28a745; }
+        .toast.error   { background:#e60000; }
+        .toast.info    { background:#004b93; }
+        .toast.fade-out { animation:fadeOut 0.4s forwards; }
+        @keyframes slideIn { to { opacity:1; transform:translateX(0); } }
+        @keyframes fadeOut { to { opacity:0; transform:translateX(40px); } }
+
+        /* ── Footer ──────────────────────────────────────────────────────────── */
+        .footer { background:#1a1a1a; color:#fff; display:flex; justify-content:center;
+                  gap:80px; padding:40px 20px; margin-top:20px; flex-wrap:wrap; }
+        .footer h4 { margin-bottom:12px; }
+        .footer p  { margin:5px 0; font-size:14px; color:#aaa; }
+        .footer a  { color:#aaa; text-decoration:none; }
+
+        /* ── Responsive breakpoints ──────────────────────────────────────────── */
+        @media(max-width:1100px) {
+          .products-grid { grid-template-columns:repeat(3,1fr); }
+          .search-container { max-width:260px; margin:0 16px; }
+        }
+        @media(max-width:768px) {
+          .hamburger { display:flex; }
+          .search-container, .header-right { display:none; }
+          .products-grid { grid-template-columns:repeat(2,1fr); gap:14px; padding:0 12px 30px; }
+          .controls-bar { margin:8px 12px; padding:8px 12px; }
+          .header { padding:12px 16px; }
+          .footer { gap:30px; }
+        }
+        @media(max-width:480px) {
+          .products-grid { grid-template-columns:1fr; }
+          .header-left h2 { font-size:15px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<!-- Mobile nav overlay -->
+<nav class="mobile-nav" id="mobile-nav">
+    <button class="mobile-close" onclick="closeMobileNav()">✕</button>
+    <a href="dashboard-v2.html">🏠 Shop</a>
+    <a href="wishlist-v2.html">❤️ Wishlist</a>
+    <a href="profile-v2.html">👤 Profile</a>
+    <a id="mobile-admin-link" href="admin-v2.html" style="display:none;">⚙️ Admin</a>
+    <a href="cart-v2.html">🛒 Cart</a>
+    <button onclick="logout()">🚪 Logout</button>
+</nav>
+
+<header class="header">
+    <div class="header-left">
+        <button class="hamburger" onclick="openMobileNav()" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <img src="logo.png" alt="GDA Logo" style="width:52px;height:auto;">
+        <h2 id="welcome-message">GDA Sports Shop</h2>
+    </div>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search Products..." oninput="filterBySearch()">
+    </div>
+    <div class="header-right">
+        <a href="wishlist-v2.html" class="nav-link">❤️ Wishlist</a>
+        <a href="profile-v2.html" class="nav-link">👤 Profile</a>
+        <a id="admin-link" href="admin-v2.html" class="nav-link">⚙️ Admin</a>
+        <div class="cart-container" onclick="window.location.href='cart-v2.html'">
+            🛒 <span id="cart-count">0</span>
+        </div>
+        <button onclick="logout()" class="logout-btn">Logout</button>
+    </div>
+</header>
+
+<div class="controls-bar">
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterCategory('all',this)">ALL</button>
+        <button class="filter-btn" onclick="filterCategory('shoes',this)">Shoes</button>
+        <button class="filter-btn" onclick="filterCategory('clothing',this)">Clothes</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div class="sort-box">
+            <label style="font-weight:bold;font-size:14px;color:#333;">Sort: </label>
+            <select id="sortSelect" onchange="sortProducts()">
+                <option value="default">Default</option>
+                <option value="low">Price: Low to High</option>
+                <option value="high">Price: High to Low</option>
+                <option value="rating">Top Rated</option>
+            </select>
+        </div>
+        <button class="adv-toggle-btn" id="advToggleBtn" onclick="toggleAdvPanel()">
+            🎚️ Filters <span class="panel-arrow">▼</span>
+        </button>
+    </div>
+</div>
+
+<!-- Advanced Filter Panel -->
+<div class="adv-panel" id="advPanel">
+
+    <!-- Brand -->
+    <div class="adv-section">
+        <label>Brand</label>
+        <div class="adv-chips" id="brandChips"></div>
+    </div>
+
+    <!-- Size -->
+    <div class="adv-section">
+        <label>Size</label>
+        <div class="adv-chips" id="sizeChips">
+            <span class="chip" data-size="XS"    onclick="toggleChip(this,'size')">XS</span>
+            <span class="chip" data-size="S"     onclick="toggleChip(this,'size')">S</span>
+            <span class="chip" data-size="M"     onclick="toggleChip(this,'size')">M</span>
+            <span class="chip" data-size="L"     onclick="toggleChip(this,'size')">L</span>
+            <span class="chip" data-size="XL"    onclick="toggleChip(this,'size')">XL</span>
+            <span class="chip" data-size="XXL"   onclick="toggleChip(this,'size')">XXL</span>
+            <span class="chip" data-size="38"    onclick="toggleChip(this,'size')">38</span>
+            <span class="chip" data-size="39"    onclick="toggleChip(this,'size')">39</span>
+            <span class="chip" data-size="40"    onclick="toggleChip(this,'size')">40</span>
+            <span class="chip" data-size="41"    onclick="toggleChip(this,'size')">41</span>
+            <span class="chip" data-size="42"    onclick="toggleChip(this,'size')">42</span>
+            <span class="chip" data-size="43"    onclick="toggleChip(this,'size')">43</span>
+            <span class="chip" data-size="44"    onclick="toggleChip(this,'size')">44</span>
+            <span class="chip" data-size="45"    onclick="toggleChip(this,'size')">45</span>
+            <span class="chip" data-size="One Size" onclick="toggleChip(this,'size')">One Size</span>
+        </div>
+    </div>
+
+    <!-- Price Range -->
+    <div class="adv-section">
+        <label>Price Range (€)</label>
+        <div class="price-inputs">
+            <input type="number" id="minPrice" placeholder="Min" min="0" step="1">
+            <span style="color:#888;">–</span>
+            <input type="number" id="maxPrice" placeholder="Max" min="0" step="1">
+        </div>
+    </div>
+
+    <!-- Min Rating -->
+    <div class="adv-section">
+        <label>Min Rating</label>
+        <div class="adv-chips" id="ratingChips">
+            <span class="chip" data-rating="1" onclick="toggleChip(this,'rating')">★ 1+</span>
+            <span class="chip" data-rating="2" onclick="toggleChip(this,'rating')">★★ 2+</span>
+            <span class="chip" data-rating="3" onclick="toggleChip(this,'rating')">★★★ 3+</span>
+            <span class="chip" data-rating="4" onclick="toggleChip(this,'rating')">★★★★ 4+</span>
+        </div>
+    </div>
+
+    <!-- In Stock -->
+    <div class="adv-section" style="justify-content:flex-end;padding-bottom:4px;">
+        <label>Availability</label>
+        <label class="instock-label">
+            <input type="checkbox" id="inStockOnly"> In Stock Only
+        </label>
+    </div>
+
+    <!-- Actions -->
+    <div class="adv-actions">
+        <button class="btn-clear" onclick="clearAdvFilters()">✕ Clear</button>
+        <button class="btn-apply" onclick="applyAdvFilters()">Apply Filters</button>
+    </div>
+</div>
+
+<main class="products-grid" id="productsContainer">
+    <div id="loading-msg">Loading products...</div>
+</main>
+
+<footer class="footer">
+    <div>
+        <h4>GDA Sports</h4>
+        <p>Premium sports gear. Developed by the GDA Team.</p>
+    </div>
+    <div>
+        <h4>Service</h4>
+        <p><a href="#">Phone → 6945582023</a></p>
+        <p><a href="#">Email → gda@gda.com</a></p>
+        <p><a href="#">Location → Athens, Solomou 24, 10682</a></p>
+    </div>
+</footer>
+
+<script src="dashboard-v2.js"></script>
+</body>
+</html>

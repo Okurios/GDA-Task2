@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GDA Sports - My Profile</title>
+    <style>
+        *{box-sizing:border-box;}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;margin:0;padding:0;background:#f0f4fa;}
+        .nav-bar{background:#004b93;padding:12px 40px;display:flex;align-items:center;gap:24px;}
+        .nav-bar a{color:#fff;text-decoration:none;font-size:14px;font-weight:bold;}
+        .nav-bar a:hover{text-decoration:underline;}
+        .page{max-width:900px;margin:30px auto;padding:0 20px;}
+        h2{color:#004b93;margin-bottom:16px;}
+        .card{background:#fff;border-radius:10px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,0.07);margin-bottom:24px;}
+        .card h3{margin:0 0 20px;color:#004b93;border-bottom:2px solid #e8eef6;padding-bottom:10px;}
+        .form-row{margin-bottom:14px;}
+        .form-row label{display:block;font-size:13px;font-weight:bold;color:#555;margin-bottom:4px;}
+        .form-row input{width:100%;padding:9px 12px;border:1px solid #ccc;border-radius:6px;font-size:14px;}
+        .form-row input:focus{border-color:#004b93;outline:none;}
+        .btn{padding:10px 22px;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:bold;}
+        .btn-primary{background:#004b93;color:#fff;}
+        .btn-primary:hover{background:#003570;}
+        .btn-danger{background:#e60000;color:#fff;}
+        .btn-danger:hover{background:#b30000;}
+        .msg{display:none;padding:10px 14px;border-radius:6px;margin-top:12px;font-size:14px;font-weight:bold;}
+        .msg.ok{background:#e0ffe0;color:#060;border:1px solid #060;}
+        .msg.err{background:#ffe0e0;color:#c00;border:1px solid #c00;}
+        .meta{font-size:13px;color:#888;margin-top:6px;}
+        /* Orders */
+        .order-block{border:1px solid #dde4f0;border-radius:8px;margin-bottom:14px;overflow:hidden;}
+        .order-header{background:#004b93;color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;font-size:14px;}
+        .order-header span{font-weight:bold;}
+        .order-items{padding:0;}
+        .order-items table{width:100%;border-collapse:collapse;font-size:13px;}
+        .order-items td,.order-items th{padding:9px 12px;border-bottom:1px solid #eee;text-align:left;}
+        .order-items th{background:#f4f8ff;color:#004b93;font-weight:bold;}
+        .empty-orders{text-align:center;padding:30px;color:#999;}
+        #orders-loading{text-align:center;padding:20px;color:#666;}
+    </style>
+</head>
+<body>
+<div class="nav-bar">
+    <a href="dashboard-v2.html">🏠 Shop</a>
+    <a href="cart-v2.html">🛒 Cart</a>
+    <a id="admin-nav" href="admin-v2.html" style="display:none;">⚙️ Admin</a>
+</div>
+
+<div class="page">
+    <h2>👤 My Profile</h2>
+
+    <!-- Account Info -->
+    <div class="card">
+        <h3>Account Information</h3>
+        <div class="form-row"><label>Full Name</label><input type="text" id="p-name" placeholder="Your name"></div>
+        <div class="form-row"><label>Email Address</label><input type="email" id="p-email" placeholder="your@email.com"></div>
+        <p class="meta" id="p-meta"></p>
+        <button class="btn btn-primary" onclick="saveProfile()">💾 Save Changes</button>
+        <div class="msg" id="profile-msg"></div>
+    </div>
+
+    <!-- Change Password -->
+    <div class="card">
+        <h3>Change Password</h3>
+        <div class="form-row"><label>Current Password</label><input type="password" id="cp-current" placeholder="Current password"></div>
+        <div class="form-row"><label>New Password</label><input type="password" id="cp-new" placeholder="Min. 8 characters"></div>
+        <div class="form-row"><label>Confirm New Password</label><input type="password" id="cp-confirm" placeholder="Repeat new password"></div>
+        <button class="btn btn-primary" onclick="changePassword()">🔑 Change Password</button>
+        <div class="msg" id="pw-msg"></div>
+    </div>
+
+    <!-- Order History -->
+    <div class="card">
+        <h3>Order History</h3>
+        <div id="orders-loading">Loading orders...</div>
+        <div id="orders-container"></div>
+    </div>
+</div>
+
+<script src="profile-v2.js"></script>
+</body>
+</html>

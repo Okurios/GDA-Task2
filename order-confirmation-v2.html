@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GDA Sports - Order Confirmed</title>
+    <style>
+        body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; margin:0; padding:0; background:#f0f4fa; }
+        .container { max-width:700px; margin:60px auto; padding:0 20px; }
+        .card { background:#fff; border-radius:12px; padding:40px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
+        .success-icon { text-align:center; font-size:72px; margin-bottom:10px; }
+        h1 { text-align:center; color:#28a745; margin-bottom:5px; }
+        .sub { text-align:center; color:#666; margin-bottom:30px; }
+        .order-info { background:#f8f9fa; border-radius:8px; padding:20px; margin-bottom:25px; }
+        .order-info p { margin:6px 0; font-size:15px; }
+        .order-info strong { color:#004b93; }
+        table { width:100%; border-collapse:collapse; margin-bottom:20px; }
+        th, td { padding:11px 14px; border:1px solid #e0e0e0; text-align:left; font-size:14px; }
+        th { background:#004b93; color:#fff; }
+        tr:hover { background:#f8f8f8; }
+        .total-row td { font-weight:bold; font-size:16px; color:#004b93; text-align:right; }
+        .btn-row { display:flex; gap:12px; margin-top:20px; }
+        .btn { padding:12px 24px; border:none; border-radius:6px; cursor:pointer; font-size:15px; font-weight:bold; flex:1; text-align:center; text-decoration:none; display:inline-block; }
+        .btn-primary { background:#004b93; color:#fff; }
+        .btn-primary:hover { background:#003570; }
+        .btn-secondary { background:#f4f4f4; color:#333; border:1px solid #ccc; }
+        .btn-secondary:hover { background:#e0e0e0; }
+        #loading { text-align:center; padding:40px; color:#666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="loading">Loading order details...</div>
+        <div id="content" class="card" style="display:none;">
+            <div class="success-icon">🎉</div>
+            <h1>Order Confirmed!</h1>
+            <p class="sub">Thank you for your purchase. Your order has been placed successfully.</p>
+
+            <div class="order-info">
+                <p><strong>Order #:</strong> <span id="order-id"></span></p>
+                <p><strong>Date:</strong> <span id="order-date"></span></p>
+                <p><strong>Payment:</strong> <span id="order-payment"></span></p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr><th>Product</th><th>Size</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr>
+                </thead>
+                <tbody id="items-body"></tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="4" style="text-align:right;font-weight:bold;">Total:</td>
+                        <td id="order-total" style="font-weight:bold;color:#004b93;"></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div class="btn-row">
+                <a href="dashboard-v2.html" class="btn btn-primary">🛍️ Continue Shopping</a>
+                <a href="profile-v2.html"   class="btn btn-secondary">📋 View All Orders</a>
+            </div>
+        </div>
+    </div>
+    <script src="order-confirmation-v2.js"></script>
+</body>
+</html>

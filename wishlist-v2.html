@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GDA Sports - My Wishlist</title>
+    <style>
+        body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; margin:0; padding:0; background:#fff; }
+
+        .header { display:flex; justify-content:space-between; align-items:center; max-width:1400px; margin:20px auto; padding:0 20px 20px; border-bottom:1px solid #eee; flex-wrap:wrap; gap:12px; }
+        .header-left { display:flex; align-items:center; gap:12px; }
+        .header-right { display:flex; align-items:center; gap:16px; }
+        .nav-link { color:#004b93; font-weight:bold; text-decoration:none; font-size:14px; }
+        .nav-link:hover { text-decoration:underline; }
+        .logout-btn { background:#e60000; color:#fff; border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-weight:bold; }
+
+        h1 { text-align:center; color:#004b93; padding:20px; }
+        .empty-msg { text-align:center; padding:80px 20px; color:#888; font-size:18px; }
+        .empty-msg a { color:#004b93; font-weight:bold; }
+
+        .products-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:20px; max-width:1400px; margin:0 auto; padding:0 20px 60px; }
+        @media(max-width:1100px){ .products-grid{grid-template-columns:repeat(3,1fr);} }
+        @media(max-width:700px) { .products-grid{grid-template-columns:repeat(2,1fr);} }
+        @media(max-width:480px) { .products-grid{grid-template-columns:1fr;} }
+
+        .product-card { display:flex; flex-direction:column; border:1px solid #eee; border-radius:8px; overflow:hidden; }
+        .image-box { background:#f4f4f4; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; }
+        .image-box img { max-width:80%; max-height:80%; object-fit:contain; mix-blend-mode:multiply; }
+        .card-body { padding:12px; display:flex; flex-direction:column; flex:1; }
+        .brand-name { color:#004b93; font-weight:bold; font-size:14px; }
+        .product-title { font-size:13px; margin:5px 0 10px; color:#333; }
+        .price { font-size:16px; font-weight:bold; color:#004b93; margin-bottom:8px; }
+        .stock-low { font-size:12px; color:#e60000; font-weight:bold; margin-bottom:4px; }
+        .size-select { width:100%; padding:6px 8px; border:1px solid #ccc; border-radius:4px; font-size:13px; margin-bottom:8px; cursor:pointer; }
+        .add-btn { background:#004b93; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer; font-size:13px; margin-bottom:6px; }
+        .add-btn:hover:not(:disabled) { background:#003570; }
+        .remove-btn { background:transparent; color:#e60000; border:1px solid #e60000; padding:6px; border-radius:4px; cursor:pointer; font-size:12px; }
+        .remove-btn:hover { background:#ffe0e0; }
+
+        /* Toast */
+        #toast-container { position:fixed; bottom:24px; right:24px; z-index:9999; display:flex; flex-direction:column; gap:10px; }
+        .toast { padding:13px 18px; border-radius:8px; font-size:14px; font-weight:bold; color:#fff; min-width:260px; max-width:360px; box-shadow:0 4px 16px rgba(0,0,0,0.18); opacity:0; transform:translateX(40px); animation:slideIn 0.3s forwards; }
+        .toast.success { background:#28a745; }
+        .toast.error   { background:#e60000; }
+        .toast.info    { background:#004b93; }
+        .toast.fade-out { animation:fadeOut 0.4s forwards; }
+        @keyframes slideIn  { to { opacity:1; transform:translateX(0); } }
+        @keyframes fadeOut  { to { opacity:0; transform:translateX(40px); } }
+    </style>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<header class="header">
+    <div class="header-left">
+        <img src="logo.png" alt="GDA Logo" style="width:50px;height:auto;">
+        <h2 style="margin:0;color:#004b93;">My Wishlist ❤️</h2>
+    </div>
+    <div class="header-right">
+        <a href="dashboard-v2.html" class="nav-link">🏠 Shop</a>
+        <a href="cart-v2.html" class="nav-link">🛒 Cart</a>
+        <a href="profile-v2.html" class="nav-link">👤 Profile</a>
+        <button onclick="logout()" class="logout-btn">Logout</button>
+    </div>
+</header>
+
+<div id="content">
+    <div class="empty-msg">Loading...</div>
+</div>
+
+<script src="wishlist-v2.js"></script>
+</body>
+</html>

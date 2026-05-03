@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <title>GDA Sports - My Product</title>
+    <link rel="stylesheet" href="style.css"> <style>
+        .cart-page-container { padding: 50px; max-width: 900px; margin: auto; }
+        .cart-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: white; }
+        .cart-table th, .cart-table td { padding: 15px; border: 1px solid #ddd; text-align: left; }
+        .cart-table th { background-color: #004b93; color: white; }
+        .total-box { text-align: right; font-size: 24px; font-weight: bold; margin-bottom: 20px; }
+        .payment-section { background: #f4f4f4; padding: 20px; border-radius: 8px; }
+        .checkout-btn { background-color: #28a745; color: white; padding: 15px 30px; border: none; cursor: pointer; font-size: 18px; width: 100%; border-radius: 5px; }
+        .checkout-btn:hover { background-color: #218838; }
+        .back-link { display: inline-block; margin-top: 20px; color: #004b93; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="cart-page-container">
+        <h1>Cart Purchase 🛒</h1>
+        
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Energy</th>
+                </tr>
+            </thead>
+            <tbody id="cart-table-body">
+                </tbody>
+        </table>
+
+        <div class="total-box">
+            Total: <span id="cart-total-price">€ 0,00</span>
+        </div>
+
+        <div class="payment-section">
+            <h3>Τρόπος Πληρωμής</h3>
+            <label><input type="radio" name="payment" value="card" checked> Credit / Debit Card</label><br>
+            <label><input type="radio" name="payment" value="paypal"> PayPal</label><br>
+            <label><input type="radio" name="payment" value="cash"> Non-refundable</label>
+            <button class="checkout-btn" onclick="completeOrder()">Purchase Completion</button>
+        </div>
+
+        <a href="dashboard.html" class="back-link">← Return to Store</a>
+    </div>
+
+    <script src="cart.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GDA Site - Login</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <div class="gda-logo1">
+                <img src="logo.png" alt="logo" class="basic-logo">
+            </div>
+        </header>
+
+        <div class="welcome-section">
+            <div class="user-icon-container"> 
+                <img src="logo1.jpg" alt="user" class="user-avatar">
+            </div>
+            <h1>Welcome Back</h1>
+            <p>Please login to your account</p>
+        </div>
+
+        <main class="login-card">
+            <!-- Session banner (shown only when already logged in) -->
+            <div id="session-banner" style="display:none; padding:12px 15px; background:#e8f0fe; border:1px solid #004b93; border-radius:6px; margin-bottom:15px; font-size:14px; text-align:center;">
+                ✅ You're signed in as <strong id="banner-name"></strong>.
+                <a href="dashboard-v2.html" style="color:#004b93; font-weight:bold; margin-left:6px;">Continue to Shop →</a>
+                <span style="color:#888; margin:0 6px;">|</span>
+                <a href="#" onclick="clearSession()" style="color:#e60000; font-weight:bold;">Sign out</a>
+            </div>
+
+            <div id="message-box" style="display:none; padding:10px; border-radius:6px; margin-bottom:15px; text-align:center; font-weight:bold;"></div>
+            <form id="login-form">
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="login-email" placeholder="email@example.com" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="********" required>
+                </div>
+
+                <button type="submit" class="sign-in-btn" id="login-btn">Login</button>
+                
+                <div class="form-footer" style="display:flex;flex-direction:column;gap:8px;text-align:center;">
+                    <span><a href="forgot-password-v2.html" class="forgot-link">Forgot Password?</a></span>
+                    <span>Don't have an account? <a href="register-v2.html" class="forgot-link">Register here</a></span>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script src="login-v2.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-const API = 'http://localhost:3000/api';
+const API = '/api';
 
 // ─── Auth Guard ───────────────────────────────────────────────────────────────
 const token    = localStorage.getItem('gda_token');
@@ -45,6 +45,7 @@ function starsHTML(avg, count) {
 // ─── State ────────────────────────────────────────────────────────────────────
 let wishlisted      = new Set();
 let currentCategory = 'all';
+let currentGender   = '';
 
 // Advanced filter state
 let advFilters = {
@@ -142,6 +143,7 @@ async function loadProducts() {
 
   const params = new URLSearchParams();
   if (currentCategory && currentCategory !== 'all') params.set('category', currentCategory);
+  if (currentGender)                                params.set('gender',   currentGender);
   if (q)                        params.set('q',         q);
   if (sort && sort !== 'default') params.set('sort',    sort);
 
@@ -180,21 +182,13 @@ function renderProducts(products) {
     return;
   }
   container.innerHTML = products.map(p => {
-    const hasSizes   = p.sizes && p.sizes.trim() !== '';
-    const sizeValues = hasSizes ? p.sizes.split(',').map(s => s.trim()) : [];
-    const sizeSelect = hasSizes
-      ? `<select id="size-${p.id}" class="size-select">
-           <option value="">— Select Size —</option>
-           ${sizeValues.map(s => `<option value="${s}">${s}</option>`).join('')}
-         </select>`
-      : '';
     const stock      = p.stock ?? 999;
     const stockBadge = (stock > 0 && stock <= 5)
       ? `<span class="stock-low">⚠️ Only ${stock} left!</span>`
       : (stock > 0 && stock <= 10)
         ? `<span class="stock-low">Only ${stock} left!</span>` : '';
     const outOfStock = stock === 0;
-    const heart      = wishlisted.has(p.id) ? '❤️' : '🤍';
+    const heart      = wishlisted.has(p.id) ? '<i class="fa-solid fa-heart" style="color:#e60000;"></i>' : '<i class="fa-regular fa-heart"></i>';
     const avgRating  = parseFloat(p.avg_rating || 0);
     const revCount   = parseInt(p.review_count || 0);
 
@@ -208,13 +202,10 @@ function renderProducts(products) {
         <div class="product-title">${p.name}</div>
         <div class="price">€ ${p.price.toFixed(2)}</div>
         <div style="margin-bottom:6px;">${starsHTML(avgRating, revCount)}</div>
-        ${stockBadge}
-        ${sizeSelect}
-        <button class="add-btn" onclick="addToCart(${p.id},'${esc(p.name)}',${p.price},'${esc(p.sizes||'')}')"
-          ${outOfStock ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>
-          ${outOfStock ? 'Out of Stock' : 'Add to Cart'}
+        ${outOfStock ? '<span class="stock-low">Out of Stock</span>' : stockBadge}
+        <button class="add-btn" onclick="window.location.href='product-v2.html?id=${p.id}'">
+          View Product
         </button>
-        <button class="remove-btn" onclick="removeFromCart(${p.id},'${esc(p.name)}')">Remove from Cart</button>
       </div>`;
   }).join('');
 }
@@ -236,54 +227,13 @@ async function toggleWishlist(productId) {
     const btn = document.getElementById(`wish-${productId}`);
     if (data.wishlisted) {
       wishlisted.add(productId);
-      if (btn) btn.textContent = '❤️';
-      toast('❤️ Added to wishlist!', 'success');
+      if (btn) btn.innerHTML = '<i class="fa-solid fa-heart" style="color:#e60000;"></i>';
+      toast('Added to wishlist!', 'success');
     } else {
       wishlisted.delete(productId);
-      if (btn) btn.textContent = '🤍';
+      if (btn) btn.innerHTML = '<i class="fa-regular fa-heart"></i>';
       toast('Removed from wishlist.', 'info');
     }
-  } catch (e) { toast('Cannot connect to server.', 'error'); }
-}
-
-// ─── Cart Operations ──────────────────────────────────────────────────────────
-async function addToCart(productId, productName, price, sizesStr) {
-  let size = '';
-  if (sizesStr && sizesStr.trim()) {
-    const sel = document.getElementById(`size-${productId}`);
-    size = sel ? sel.value : '';
-    if (!size) { toast('Please select a size first!', 'error'); return; }
-  }
-  try {
-    const res  = await fetch(`${API}/cart/add`, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body:    JSON.stringify({ product_id: productId, product_name: productName, price, size })
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      if (res.status === 401 || res.status === 403) { logout(); return; }
-      toast(data.error || 'Failed to add item.', 'error');
-      return;
-    }
-    toast('🛒 ' + data.message, 'success');
-    loadCartCount();
-  } catch (e) { toast('Cannot connect to server.', 'error'); }
-}
-
-async function removeFromCart(productId, productName) {
-  try {
-    const res   = await fetch(`${API}/cart`, { headers: { 'Authorization': 'Bearer ' + token } });
-    const items = await res.json();
-    const item  = items.find(i => i.product_id === productId || i.product_name === productName);
-    if (!item) { toast('This item is not in your cart.', 'info'); return; }
-    const del  = await fetch(`${API}/cart/remove/${item.id}`, {
-      method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token }
-    });
-    const data = await del.json();
-    if (!del.ok) { toast(data.error || 'Failed to remove.', 'error'); return; }
-    toast(productName + ' removed from cart.', 'info');
-    loadCartCount();
   } catch (e) { toast('Cannot connect to server.', 'error'); }
 }
 
@@ -303,6 +253,20 @@ function filterCategory(category, btn) {
   currentCategory = category;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
+  loadProducts();
+}
+
+function filterGender(gender, btn) {
+  if (currentGender === gender) {
+    currentGender = '';
+    btn.classList.remove('active');
+  } else {
+    currentGender = gender;
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      if (b.id === 'gender-men-btn' || b.id === 'gender-women-btn') b.classList.remove('active');
+    });
+    btn.classList.add('active');
+  }
   loadProducts();
 }
 

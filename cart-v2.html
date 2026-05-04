@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GDA Sports - My Cart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; margin:0; padding:0; background:#f9f9f9; }
         .cart-page-container { padding:40px 50px; max-width:960px; margin:auto; }
@@ -18,25 +19,79 @@
         .qty-btn:hover { background:#004b93; color:#fff; }
         .qty-num { min-width:24px; text-align:center; font-weight:bold; }
         .delete-btn { color:#e60000; cursor:pointer; border:none; background:none; font-size:16px; }
-        .total-box { text-align:right; font-size:22px; font-weight:bold; margin-bottom:20px; color:#004b93; }
+
+        /* ── Total box ── */
+        .total-box { background:#fff; border:1px solid #ddd; border-radius:8px; padding:16px 20px; margin-bottom:20px; }
+        .total-row { display:flex; justify-content:space-between; font-size:15px; margin-bottom:8px; color:#555; }
+        .total-row.grand { font-size:20px; font-weight:bold; color:#004b93; border-top:2px solid #eee; padding-top:10px; margin-top:4px; }
+
+        /* ── Checkout panel ── */
         .payment-section { background:#f0f4fa; padding:20px; border-radius:8px; }
         .payment-section h3 { margin-top:0; color:#004b93; }
         .payment-section label { display:block; margin:8px 0; cursor:pointer; font-size:15px; }
         .checkout-btn { background:#28a745; color:#fff; padding:14px 30px; border:none; cursor:pointer; font-size:17px; width:100%; border-radius:5px; margin-top:15px; font-weight:bold; }
         .checkout-btn:hover { background:#218838; }
+
+        /* ── Address grid ── */
         .nav-bar { background:#004b93; padding:12px 50px; display:flex; align-items:center; gap:20px; }
         .nav-bar a { color:#fff; text-decoration:none; font-size:14px; font-weight:bold; }
         .nav-bar a:hover { text-decoration:underline; }
+        .address-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+        .addr-field { display:flex; flex-direction:column; gap:4px; }
+        .addr-field.addr-full { grid-column:1 / -1; }
+        .addr-field label { font-size:13px; font-weight:bold; color:#444; }
+        .addr-field input { padding:9px 12px; border:1px solid #ccc; border-radius:5px; font-size:14px; }
+        .addr-field input:focus { outline:none; border-color:#004b93; box-shadow:0 0 0 2px rgba(0,75,147,0.15); }
+
+        /* ── Delivery method ── */
+        .delivery-options { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px; }
+        .delivery-card { border:2px solid #ddd; border-radius:8px; padding:12px 14px; cursor:pointer; background:#fff; transition:all 0.15s; position:relative; }
+        .delivery-card:hover { border-color:#004b93; }
+        .delivery-card input[type=radio] { position:absolute; opacity:0; width:0; height:0; }
+        .delivery-card.selected { border-color:#004b93; background:#e8f0fe; }
+        .delivery-card .del-icon { font-size:22px; margin-bottom:4px; }
+        .delivery-card .del-name { font-weight:bold; font-size:14px; color:#222; }
+        .delivery-card .del-time { font-size:12px; color:#666; margin-top:2px; }
+        .delivery-card .del-price { font-size:13px; font-weight:bold; color:#28a745; margin-top:4px; }
+        .delivery-card .del-price.paid { color:#e60000; }
+
+        /* ── Card info panel ── */
+        .card-info-panel { background:#fff; border:1px solid #d0e4f7; border-radius:8px; padding:16px; margin-top:14px; display:none; }
+        .card-info-panel.visible { display:block; }
+        .card-info-panel h4 { margin:0 0 12px; color:#004b93; font-size:15px; }
+        .card-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+        .card-field { display:flex; flex-direction:column; gap:4px; }
+        .card-field.card-full { grid-column:1/-1; }
+        .card-field label { font-size:12px; font-weight:bold; color:#555; text-transform:uppercase; letter-spacing:0.4px; }
+        .card-field input { padding:9px 12px; border:1px solid #ccc; border-radius:5px; font-size:14px; font-family:monospace; }
+        .card-field input:focus { outline:none; border-color:#004b93; box-shadow:0 0 0 2px rgba(0,75,147,0.15); }
+        .card-secure-note { font-size:12px; color:#888; margin-top:8px; display:flex; align-items:center; gap:4px; }
+
+        /* ── Payment radios ── */
+        .pay-options { display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; }
+        .pay-option { border:2px solid #ddd; border-radius:8px; padding:10px 18px; cursor:pointer; background:#fff; display:flex; align-items:center; gap:8px; font-size:15px; font-weight:bold; transition:all 0.15s; }
+        .pay-option input[type=radio] { display:none; }
+        .pay-option:hover { border-color:#004b93; }
+        .pay-option.selected { border-color:#004b93; background:#e8f0fe; color:#004b93; }
+
+        @media(max-width:600px){
+          .address-grid, .card-grid { grid-template-columns:1fr; }
+          .addr-field.addr-full, .card-field.card-full { grid-column:1; }
+          .delivery-options { grid-template-columns:1fr; }
+          .pay-options { flex-direction:column; }
+          .cart-page-container { padding:20px 16px; }
+          .nav-bar { padding:12px 16px; }
+        }
     </style>
 </head>
 <body>
     <div class="nav-bar">
-        <a href="dashboard-v2.html">🏠 Back to Shop</a>
-        <a href="profile-v2.html">👤 Profile</a>
+        <a href="dashboard-v2.html"><i class="fa-solid fa-house"></i> Back to Shop</a>
+        <a href="profile-v2.html"><i class="fa-solid fa-user"></i> Profile</a>
     </div>
 
     <div class="cart-page-container">
-        <h1>Shopping Cart 🛒</h1>
+        <h1>Shopping Cart <i class="fa-solid fa-cart-shopping"></i></h1>
         <div id="msg-box"></div>
 
         <table class="cart-table">
@@ -44,6 +99,7 @@
                 <tr>
                     <th>Product</th>
                     <th>Size</th>
+                    <th>Colour</th>
                     <th>Price</th>
                     <th>Quantity</th>
                     <th>Subtotal</th>
@@ -53,14 +109,127 @@
             <tbody id="cart-table-body"></tbody>
         </table>
 
-        <div class="total-box">Total: <span id="cart-total-price">€ 0.00</span></div>
+        <!-- Order summary -->
+        <div class="total-box">
+            <div class="total-row"><span>Subtotal</span><span id="subtotal-price">€ 0.00</span></div>
+            <div class="total-row"><span id="delivery-label">Delivery</span><span id="delivery-price-display">Free</span></div>
+            <div class="total-row grand"><span>Total</span><span id="cart-total-price">€ 0.00</span></div>
+        </div>
 
         <div class="payment-section">
-            <h3>Payment Method</h3>
-            <label><input type="radio" name="payment" value="card" checked> 💳 Credit / Debit Card</label>
-            <label><input type="radio" name="payment" value="paypal"> 🅿️ PayPal</label>
-            <label><input type="radio" name="payment" value="cash"> 💵 Cash on Delivery</label>
-            <button class="checkout-btn" onclick="completeOrder()">✅ Complete Purchase</button>
+
+            <!-- Shipping Address -->
+            <h3><i class="fa-solid fa-truck"></i> Shipping Address</h3>
+            <div class="address-grid">
+                <div class="addr-field">
+                    <label for="addr-name">Full Name *</label>
+                    <input type="text" id="addr-name" placeholder="John Doe">
+                </div>
+                <div class="addr-field">
+                    <label for="addr-phone">Phone</label>
+                    <input type="text" id="addr-phone" placeholder="+30 6912345678">
+                </div>
+                <div class="addr-field addr-full">
+                    <label for="addr-street">Street Address *</label>
+                    <input type="text" id="addr-street" placeholder="123 Main Street">
+                </div>
+                <div class="addr-field">
+                    <label for="addr-city">City *</label>
+                    <input type="text" id="addr-city" placeholder="Athens">
+                </div>
+                <div class="addr-field">
+                    <label for="addr-postal">Postal Code *</label>
+                    <input type="text" id="addr-postal" placeholder="10001">
+                </div>
+                <div class="addr-field">
+                    <label for="addr-country">Country *</label>
+                    <input type="text" id="addr-country" placeholder="Greece">
+                </div>
+            </div>
+
+            <!-- Delivery Method -->
+            <h3 style="margin-top:24px;"><i class="fa-solid fa-truck-fast"></i> Delivery Method</h3>
+            <div class="delivery-options">
+                <label class="delivery-card selected" id="del-standard" onclick="selectDelivery('standard',0,this)">
+                    <input type="radio" name="delivery" value="standard" checked>
+                    <div class="del-icon"><i class="fa-solid fa-box"></i></div>
+                    <div class="del-name">Standard</div>
+                    <div class="del-time">3–5 business days</div>
+                    <div class="del-price">Free</div>
+                </label>
+                <label class="delivery-card" id="del-express" onclick="selectDelivery('express',5.99,this)">
+                    <input type="radio" name="delivery" value="express">
+                    <div class="del-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="del-name">Express</div>
+                    <div class="del-time">1–2 business days</div>
+                    <div class="del-price paid">+ € 5.99</div>
+                </label>
+                <label class="delivery-card" id="del-pickup" onclick="selectDelivery('pickup',0,this)">
+                    <input type="radio" name="delivery" value="pickup">
+                    <div class="del-icon"><i class="fa-solid fa-store"></i></div>
+                    <div class="del-name">Store Pickup</div>
+                    <div class="del-time">Available in-store</div>
+                    <div class="del-price">Free</div>
+                </label>
+            </div>
+
+            <!-- Payment Method -->
+            <h3 style="margin-top:24px;"><i class="fa-solid fa-credit-card"></i> Payment Method</h3>
+            <div class="pay-options">
+                <label class="pay-option selected" onclick="selectPayment('card',this)">
+                    <input type="radio" name="payment" value="card" checked>
+                    <i class="fa-solid fa-credit-card"></i> Credit / Debit Card
+                </label>
+                <label class="pay-option" onclick="selectPayment('paypal',this)">
+                    <input type="radio" name="payment" value="paypal">
+                    <i class="fa-brands fa-paypal"></i> PayPal
+                </label>
+                <label class="pay-option" onclick="selectPayment('cash',this)">
+                    <input type="radio" name="payment" value="cash">
+                    <i class="fa-solid fa-money-bill-wave"></i> Cash on Delivery
+                </label>
+            </div>
+
+            <!-- PayPal Panel (shown when PayPal is selected) -->
+            <div class="card-info-panel" id="paypal-info-panel">
+                <h4><i class="fa-brands fa-paypal"></i> PayPal Details</h4>
+                <div class="card-field card-full">
+                    <label for="paypal-email">PayPal Email Address *</label>
+                    <input type="email" id="paypal-email" placeholder="your-paypal@email.com"
+                           autocomplete="email" style="font-family:inherit;">
+                </div>
+                <div class="card-secure-note"><i class="fa-solid fa-lock"></i> You will be redirected to PayPal to complete payment securely.</div>
+            </div>
+
+            <!-- Card Info Panel (shown when card is selected) -->
+            <div class="card-info-panel visible" id="card-info-panel">
+                <h4><i class="fa-solid fa-lock"></i> Card Details</h4>
+                <div class="card-grid">
+                    <div class="card-field card-full">
+                        <label for="card-name">Cardholder Name *</label>
+                        <input type="text" id="card-name" placeholder="JOHN DOE" autocomplete="cc-name"
+                               oninput="this.value=this.value.toUpperCase()">
+                    </div>
+                    <div class="card-field card-full">
+                        <label for="card-number">Card Number *</label>
+                        <input type="text" id="card-number" placeholder="1234 5678 9012 3456"
+                               maxlength="19" autocomplete="cc-number" oninput="formatCardNumber(this)">
+                    </div>
+                    <div class="card-field">
+                        <label for="card-expiry">Expiry (MM/YY) *</label>
+                        <input type="text" id="card-expiry" placeholder="MM/YY"
+                               maxlength="5" autocomplete="cc-exp" oninput="formatExpiry(this)">
+                    </div>
+                    <div class="card-field">
+                        <label for="card-cvv">CVV *</label>
+                        <input type="password" id="card-cvv" placeholder="•••"
+                               maxlength="4" autocomplete="cc-csc" oninput="this.value=this.value.replace(/\D/g,'')">
+                    </div>
+                </div>
+                <div class="card-secure-note"><i class="fa-solid fa-lock"></i> Your card information is encrypted and secure.</div>
+            </div>
+
+            <button class="checkout-btn" onclick="completeOrder()"><i class="fa-solid fa-check"></i> Complete Purchase</button>
         </div>
     </div>
 

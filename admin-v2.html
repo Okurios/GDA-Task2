@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GDA Sports - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         *{box-sizing:border-box;}
         body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;margin:0;padding:0;background:#f0f4fa;}
@@ -57,11 +58,11 @@
 </head>
 <body>
 <div class="nav-bar">
-    <span class="brand">⚙️ GDA Admin</span>
+    <span class="brand"><i class="fa-solid fa-gear"></i> GDA Admin</span>
     <div>
-        <a href="dashboard-v2.html">🏠 Shop</a>
-        <a href="profile-v2.html">👤 Profile</a>
-        <a href="#" onclick="logout()">🚪 Logout</a>
+        <a href="dashboard-v2.html"><i class="fa-solid fa-house"></i> Shop</a>
+        <a href="profile-v2.html"><i class="fa-solid fa-user"></i> Profile</a>
+        <a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
     </div>
 </div>
 
@@ -74,9 +75,9 @@
     </div>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('products',this)">📦 Products</button>
-        <button class="tab-btn"        onclick="switchTab('users',this)">👥 Users</button>
-        <button class="tab-btn"        onclick="switchTab('orders',this)">📋 Orders</button>
+        <button class="tab-btn active" onclick="switchTab('products',this)"><i class="fa-solid fa-box"></i> Products</button>
+        <button class="tab-btn"        onclick="switchTab('users',this)"><i class="fa-solid fa-users"></i> Users</button>
+        <button class="tab-btn"        onclick="switchTab('orders',this)"><i class="fa-solid fa-list"></i> Orders</button>
     </div>
 
     <!-- ── PRODUCTS TAB ───────────────────────────────────────────────────── -->
@@ -87,7 +88,7 @@
         </div>
         <div id="products-loading">Loading...</div>
         <table id="products-table" style="display:none;">
-            <thead><tr><th>#</th><th>Name</th><th>Brand</th><th>Category</th><th>Price</th><th>Sizes</th><th>Stock</th><th>Actions</th></tr></thead>
+            <thead><tr><th>#</th><th>Name</th><th>Brand</th><th>Category</th><th>Gender</th><th>Price</th><th>Sizes</th><th>Stock</th><th>Actions</th></tr></thead>
             <tbody id="products-tbody"></tbody>
         </table>
 
@@ -105,15 +106,35 @@
                         <option value="clothing">Clothing</option>
                     </select>
                 </div>
+                <div class="fg"><label>Gender</label>
+                    <select id="pf-gender">
+                        <option value="men">Men's</option>
+                        <option value="women">Women's</option>
+                        <option value="unisex">Unisex</option>
+                    </select>
+                </div>
                 <div class="fg"><label>Price (€) *</label><input id="pf-price" type="number" step="0.01" min="0" placeholder="0.00"></div>
-                <div class="fg"><label>Stock</label><input id="pf-stock" type="number" min="0" placeholder="100"></div>
             </div>
             <div class="fg-row">
+                <div class="fg"><label>Stock</label><input id="pf-stock" type="number" min="0" placeholder="100"></div>
                 <div class="fg"><label>Image filename</label><input id="pf-image" placeholder="image 1.webp"></div>
-                <div class="fg"><label>Sizes (comma-separated)</label><input id="pf-sizes" placeholder="S,M,L,XL or 38,39,40"></div>
+            </div>
+            <div class="fg-row">
+                <div class="fg">
+                    <label>Sizes (comma-separated)</label>
+                    <input id="pf-sizes" placeholder="S,M,L,XL or 38,39,40">
+                </div>
+                <div class="fg">
+                    <label>Colors (comma-separated)</label>
+                    <input id="pf-colors" placeholder="Black,White,Red,Blue">
+                </div>
+            </div>
+            <div class="fg">
+                <label>Description</label>
+                <textarea id="pf-description" rows="3" style="width:100%;padding:8px 10px;border:1px solid #ccc;border-radius:5px;font-size:13px;font-family:inherit;resize:vertical;" placeholder="Product description..."></textarea>
             </div>
             <div style="display:flex;gap:10px;margin-top:6px;">
-                <button class="btn btn-green" onclick="submitProduct()">💾 Save</button>
+                <button class="btn btn-green" onclick="submitProduct()"><i class="fa-solid fa-floppy-disk"></i> Save</button>
                 <button class="btn btn-gray"  onclick="hideProductForm()">Cancel</button>
             </div>
             <div class="msg-box" id="pf-msg"></div>
@@ -134,7 +155,7 @@
     <div id="tab-orders" class="tab-content">
         <div id="orders-loading">Loading...</div>
         <table id="orders-table" style="display:none;">
-            <thead><tr><th>#</th><th>Customer</th><th>Email</th><th>Payment</th><th>Total</th><th>Date</th><th>Items</th></tr></thead>
+            <thead><tr><th>#</th><th>Customer</th><th>Email</th><th>Payment</th><th>Delivery</th><th>Total</th><th>Delivery Address</th><th>Date</th><th>Items</th></tr></thead>
             <tbody id="orders-tbody"></tbody>
         </table>
     </div>

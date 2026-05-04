@@ -1,4 +1,4 @@
-const API   = 'http://localhost:3000/api';
+const API   = '/api';
 const token = localStorage.getItem('gda_token');
 
 if (!token) window.location.href = 'login-v2.html';
@@ -28,6 +28,17 @@ async function loadOrder() {
     document.getElementById('order-date').textContent    = new Date(order.created_at).toLocaleString();
     document.getElementById('order-payment').textContent = capitalise(order.payment_method);
     document.getElementById('order-total').textContent   = `€ ${parseFloat(order.total).toFixed(2)}`;
+
+    // Shipping address
+    if (order.full_name) {
+      document.getElementById('order-fullname').textContent = order.full_name;
+      const addrParts = [order.address, order.city, order.postal_code, order.country].filter(Boolean);
+      document.getElementById('order-address').textContent  = addrParts.join(', ');
+      if (order.phone) {
+        document.getElementById('order-phone').textContent = order.phone;
+        document.getElementById('order-phone-row').style.display = 'block';
+      }
+    }
 
     const tbody = document.getElementById('items-body');
     tbody.innerHTML = order.items.map(item => `

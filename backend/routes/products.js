@@ -5,9 +5,9 @@ const db      = require('../database');
 // ─── GET /api/products ───────────────────────────────────────────────────────
 // Query params: ?q=  ?category=  ?brand=  ?sort=low|high
 //               ?size=  ?minPrice=  ?maxPrice=  ?minRating=  ?inStock=1
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const {
-    q = '', category = '', brand = '', sort = '',
+    q = '', category = '', gender = '', brand = '', sort = '',
     size = '', minPrice = '', maxPrice = '',
     minRating = '', inStock = ''
   } = req.query;
@@ -23,6 +23,13 @@ router.get('/', (req, res) => {
 
   if (category && category !== 'all') {
     sql += ' AND p.category = ?'; params.push(category);
+  }
+  if (gender && gender !== 'all') {
+    if (gender === 'men' || gender === 'women') {
+      sql += " AND (p.gender = ? OR p.gender = 'unisex')"; params.push(gender);
+    } else {
+      sql += ' AND p.gender = ?'; params.push(gender);
+    }
   }
   if (brand) {
     sql += ' AND p.brand = ?'; params.push(brand);
@@ -57,19 +64,19 @@ router.get('/', (req, res) => {
   else if (sort === 'rating') sql += ' ORDER BY avg_rating DESC';
   else if (minRating !== '')  sql += ' ORDER BY avg_rating DESC';  // default when filtering by rating
 
-  const products = db.prepare(sql).all(...params);
+  const products = await db.prepare(sql).all(...params);
   return res.json(products);
 });
 
 // ─── GET /api/products/brands  (distinct brand list for filter UI) ─────────
-router.get('/brands', (req, res) => {
-  const rows = db.prepare('SELECT DISTINCT brand FROM products ORDER BY brand').all();
+router.get('/brands', async (req, res) => {
+  const rows = await db.prepare('SELECT DISTINCT brand FROM products ORDER BY brand').all();
   return res.json(rows.map(r => r.brand));
 });
 
 // ─── GET /api/products/:id ────────────────────────────────────────────────────
-router.get('/:id', (req, res) => {
-  const product = db.prepare(`
+router.get('/:id', async (req, res) => {
+  const product = await db.prepare(`
     SELECT p.*,
       ROUND(COALESCE(AVG(r.rating), 0), 1) AS avg_rating,
       COUNT(r.id) AS review_count

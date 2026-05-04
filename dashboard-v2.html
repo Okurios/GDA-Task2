@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GDA Sports - Shop Floor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; margin:0; padding:0; background:#fff; }
@@ -164,13 +165,12 @@
 
 <!-- Mobile nav overlay -->
 <nav class="mobile-nav" id="mobile-nav">
-    <button class="mobile-close" onclick="closeMobileNav()">✕</button>
-    <a href="dashboard-v2.html">🏠 Shop</a>
-    <a href="wishlist-v2.html">❤️ Wishlist</a>
-    <a href="profile-v2.html">👤 Profile</a>
-    <a id="mobile-admin-link" href="admin-v2.html" style="display:none;">⚙️ Admin</a>
-    <a href="cart-v2.html">🛒 Cart</a>
-    <button onclick="logout()">🚪 Logout</button>
+    <button class="mobile-close" onclick="closeMobileNav()">&times;</button>
+    <a href="dashboard-v2.html"><i class="fa-solid fa-house"></i> Shop</a>
+    <a href="profile-v2.html"><i class="fa-solid fa-user"></i> Profile</a>
+    <a id="mobile-admin-link" href="admin-v2.html" style="display:none;"><i class="fa-solid fa-gear"></i> Admin</a>
+    <a href="cart-v2.html"><i class="fa-solid fa-cart-shopping"></i> Cart</a>
+    <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
 </nav>
 
 <header class="header">
@@ -185,11 +185,11 @@
         <input type="text" id="searchInput" placeholder="Search Products..." oninput="filterBySearch()">
     </div>
     <div class="header-right">
-        <a href="wishlist-v2.html" class="nav-link">❤️ Wishlist</a>
-        <a href="profile-v2.html" class="nav-link">👤 Profile</a>
-        <a id="admin-link" href="admin-v2.html" class="nav-link">⚙️ Admin</a>
+        <a href="wishlist-v2.html" class="nav-link"><i class="fa-solid fa-heart"></i> Wishlist</a>
+        <a href="profile-v2.html" class="nav-link"><i class="fa-solid fa-user"></i> Profile</a>
+        <a id="admin-link" href="admin-v2.html" class="nav-link"><i class="fa-solid fa-gear"></i> Admin</a>
         <div class="cart-container" onclick="window.location.href='cart-v2.html'">
-            🛒 <span id="cart-count">0</span>
+            <i class="fa-solid fa-cart-shopping"></i> <span id="cart-count">0</span>
         </div>
         <button onclick="logout()" class="logout-btn">Logout</button>
     </div>
@@ -200,6 +200,9 @@
         <button class="filter-btn active" onclick="filterCategory('all',this)">ALL</button>
         <button class="filter-btn" onclick="filterCategory('shoes',this)">Shoes</button>
         <button class="filter-btn" onclick="filterCategory('clothing',this)">Clothes</button>
+        <span style="color:#ccc;margin:0 4px;">|</span>
+        <button class="filter-btn" id="gender-men-btn" onclick="filterGender('men',this)"><i class="fa-solid fa-mars"></i> Men's</button>
+        <button class="filter-btn" id="gender-women-btn" onclick="filterGender('women',this)"><i class="fa-solid fa-venus"></i> Women's</button>
     </div>
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
         <div class="sort-box">

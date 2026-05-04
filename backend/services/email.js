@@ -59,6 +59,15 @@ function orderConfirmationEmail(fullname, order, items) {
       <td style="padding:10px;border-bottom:1px solid #eee;text-align:right;font-weight:bold;">€${(i.price * (i.quantity || 1)).toFixed(2)}</td>
     </tr>`).join('');
 
+  const shippingBlock = order.address ? `
+    <div style="background:#f0f7ff;padding:15px;border-radius:8px;margin:16px 0;border-left:4px solid #004b93;">
+      <p style="margin:0 0 6px 0;font-weight:bold;color:#004b93;">🚚 Shipping Address</p>
+      <p style="margin:3px 0;color:#555;">${order.full_name || fullname}</p>
+      <p style="margin:3px 0;color:#555;">${order.address}</p>
+      <p style="margin:3px 0;color:#555;">${[order.city, order.postal_code, order.country].filter(Boolean).join(', ')}</p>
+      ${order.phone ? `<p style="margin:3px 0;color:#555;">📞 ${order.phone}</p>` : ''}
+    </div>` : '';
+
   return `
   <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:30px;border:1px solid #eee;border-radius:10px;">
     <h1 style="color:#004b93;text-align:center;">GDA Sports</h1>
@@ -69,6 +78,7 @@ function orderConfirmationEmail(fullname, order, items) {
       <p style="margin:5px 0;"><strong>Payment:</strong> ${order.payment_method}</p>
       <p style="margin:5px 0;"><strong>Date:</strong> ${new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'long', year:'numeric' })}</p>
     </div>
+    ${shippingBlock}
     <table style="width:100%;border-collapse:collapse;">
       <thead>
         <tr style="background:#004b93;color:#fff;">

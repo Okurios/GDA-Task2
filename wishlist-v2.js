@@ -1,4 +1,4 @@
-const API   = 'http://localhost:3000/api';
+const API   = '/api';
 const token = localStorage.getItem('gda_token');
 if (!token) window.location.replace('login-v2.html');
 

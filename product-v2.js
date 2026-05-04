@@ -1,4 +1,4 @@
-const API   = 'http://localhost:3000/api';
+const API   = '/api';
 const token = localStorage.getItem('gda_token');
 if (!token) window.location.replace('login-v2.html');
 
@@ -16,6 +16,18 @@ function toast(message, type = 'success') {
   el.textContent = message;
   c.appendChild(el);
   setTimeout(() => { el.classList.add('fade-out'); el.addEventListener('animationend', () => el.remove()); }, 3000);
+}
+
+// ─── Colour helper (name → CSS background) ───────────────────────────────────
+const COLOR_MAP = {
+  black:'#222', white:'#fff', red:'#e60000', blue:'#0047ab', navy:'#001f5b',
+  green:'#28a745', yellow:'#ffc107', orange:'#fd7e14', pink:'#e83e8c',
+  purple:'#6f42c1', grey:'#888', gray:'#888', brown:'#795548', silver:'#aaa',
+  gold:'#c9a227', anthracite:'#3d3d3d', 'light blue':'#5bc0de', cyan:'#17a2b8',
+  maroon:'#800000', beige:'#f5f0e8', coral:'#ff7f50', teal:'#008080'
+};
+function colorCSS(name) {
+  return COLOR_MAP[name.toLowerCase().trim()] || '#ccc';
 }
 
 // ─── Stars helper ─────────────────────────────────────────────────────────────
@@ -57,6 +69,15 @@ function renderProduct(p, myReview) {
          ${sizeValues.map(s => `<option value="${s}">${s}</option>`).join('')}
        </select>` : '';
 
+  const hasColors   = p.colors && p.colors.trim() !== '';
+  const colorValues = hasColors ? p.colors.split(',').map(c => c.trim()) : [];
+  const colorPicker = hasColors
+    ? `<div class="size-label" style="margin-top:14px;">Select Colour:</div>
+       <select id="detail-color" class="size-select">
+         <option value="">— Choose a colour —</option>
+         ${colorValues.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('')}
+       </select>` : '';
+
   const stock = p.stock ?? 999;
   let stockBadge = '';
   if (stock === 0)      stockBadge = '<span class="stock-badge out-stock">Out of Stock</span>';
@@ -66,7 +87,7 @@ function renderProduct(p, myReview) {
 
   const avgRating   = parseFloat(p.avg_rating || 0);
   const reviewCount = parseInt(p.review_count || 0);
-  const heartIcon   = wishlisted ? '❤️' : '🤍';
+  const heartIcon   = wishlisted ? '<i class="fa-solid fa-heart" style="color:#e60000;"></i>' : '<i class="fa-regular fa-heart"></i>';
 
   document.getElementById('product-content').innerHTML = `
     <section class="product-section">
@@ -82,9 +103,11 @@ function renderProduct(p, myReview) {
         </div>
         <div class="price">€ ${p.price.toFixed(2)}</div>
         ${stockBadge}
+        ${p.description && p.description.trim() ? `<p class="product-description">${p.description}</p>` : ''}
         ${sizeSelect}
+        ${colorPicker}
         <div class="btn-row">
-          <button class="add-btn" id="add-btn" onclick="addToCart(${p.id},'${esc(p.name)}',${p.price},'${esc(p.sizes||'')}')"
+          <button class="add-btn" id="add-btn" onclick="addToCart(${p.id},'${esc(p.name)}',${p.price},'${esc(p.sizes||'')}','${esc(p.colors||'')}')"
             ${stock === 0 ? 'disabled style="opacity:.5;cursor:not-allowed;"' : ''}>
             ${stock === 0 ? 'Out of Stock' : '🛒 Add to Cart'}
           </button>
@@ -195,18 +218,24 @@ async function deleteReview(pid) {
 }
 
 // ─── Add to cart ──────────────────────────────────────────────────────────────
-async function addToCart(productId, productName, price, sizesStr) {
+async function addToCart(productId, productName, price, sizesStr, colorsStr) {
   let size = '';
   if (sizesStr && sizesStr.trim()) {
     const sel = document.getElementById('detail-size');
     size = sel ? sel.value : '';
     if (!size) { toast('Please select a size first!', 'error'); return; }
   }
+  let color = '';
+  if (colorsStr && colorsStr.trim()) {
+    const sel = document.getElementById('detail-color');
+    color = sel ? sel.value : '';
+    if (!color) { toast('Please select a colour first!', 'error'); return; }
+  }
   try {
     const res  = await fetch(`${API}/cart/add`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body:    JSON.stringify({ product_id: productId, product_name: productName, price, size })
+      body:    JSON.stringify({ product_id: productId, product_name: productName, price, size, color })
     });
     const data = await res.json();
     if (!res.ok) { toast(data.error || 'Failed to add.', 'error'); return; }
@@ -226,7 +255,7 @@ async function toggleWishlist(pid) {
     if (!res.ok) { toast(data.error || 'Error.', 'error'); return; }
     wishlisted = data.wishlisted;
     const btn = document.getElementById('wish-btn-lg');
-    btn.textContent = wishlisted ? '❤️' : '🤍';
+    btn.innerHTML = wishlisted ? '<i class="fa-solid fa-heart" style="color:#e60000;"></i>' : '<i class="fa-regular fa-heart"></i>';
     btn.classList.toggle('active', wishlisted);
     toast(data.message, wishlisted ? 'success' : 'info');
   } catch (e) { toast('Cannot connect to server.', 'error'); }

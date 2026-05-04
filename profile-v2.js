@@ -1,4 +1,4 @@
-const API   = 'http://localhost:3000/api';
+const API   = '/api';
 const token = localStorage.getItem('gda_token');
 const role  = localStorage.getItem('gda_role') || 'user';
 

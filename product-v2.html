@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product – GDA Sports</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; margin:0; padding:0; background:#fff; color:#333; }
@@ -35,6 +36,9 @@
         .stock-badge.in-stock { background:#e0ffe0; color:#060; }
         .stock-badge.low-stock { background:#fff3cd; color:#856404; }
         .stock-badge.out-stock { background:#ffe0e0; color:#c00; }
+
+        .product-description { font-size:14px; color:#555; line-height:1.6; margin:12px 0 14px;
+                                border-left:3px solid #004b93; padding-left:12px; }
 
         .size-label { font-weight:bold; font-size:14px; margin-bottom:6px; }
         .size-select { width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:14px; margin-bottom:14px; }
@@ -92,10 +96,10 @@
         <button class="back-btn" onclick="history.back()">← Back</button>
     </div>
     <div class="header-right">
-        <a href="dashboard-v2.html" class="nav-link">🏠 Shop</a>
-        <a href="wishlist-v2.html" class="nav-link">❤️ Wishlist</a>
-        <a href="cart-v2.html" class="nav-link">🛒 Cart</a>
-        <a href="profile-v2.html" class="nav-link">👤 Profile</a>
+        <a href="dashboard-v2.html" class="nav-link"><i class="fa-solid fa-house"></i> Shop</a>
+        <a href="wishlist-v2.html" class="nav-link"><i class="fa-solid fa-heart"></i> Wishlist</a>
+        <a href="cart-v2.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i> Cart</a>
+        <a href="profile-v2.html" class="nav-link"><i class="fa-solid fa-user"></i> Profile</a>
         <button onclick="logout()" class="logout-btn">Logout</button>
     </div>
 </header>

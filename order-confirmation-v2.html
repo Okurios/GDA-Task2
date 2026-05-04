@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GDA Sports - Order Confirmed</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; margin:0; padding:0; background:#f0f4fa; }
         .container { max-width:700px; margin:60px auto; padding:0 20px; }
@@ -32,7 +33,7 @@
     <div class="container">
         <div id="loading">Loading order details...</div>
         <div id="content" class="card" style="display:none;">
-            <div class="success-icon">🎉</div>
+            <div class="success-icon"><i class="fa-solid fa-circle-check" style="color:#28a745;"></i></div>
             <h1>Order Confirmed!</h1>
             <p class="sub">Thank you for your purchase. Your order has been placed successfully.</p>
 
@@ -40,6 +41,10 @@
                 <p><strong>Order #:</strong> <span id="order-id"></span></p>
                 <p><strong>Date:</strong> <span id="order-date"></span></p>
                 <p><strong>Payment:</strong> <span id="order-payment"></span></p>
+                <hr style="border:none;border-top:1px solid #dee2e6;margin:12px 0;">
+                <p><strong><i class="fa-solid fa-truck"></i> Ship to:</strong> <span id="order-fullname"></span></p>
+                <p><strong>Address:</strong> <span id="order-address"></span></p>
+                <p id="order-phone-row" style="display:none;"><strong>Phone:</strong> <span id="order-phone"></span></p>
             </div>
 
             <table>
@@ -56,8 +61,8 @@
             </table>
 
             <div class="btn-row">
-                <a href="dashboard-v2.html" class="btn btn-primary">🛍️ Continue Shopping</a>
-                <a href="profile-v2.html"   class="btn btn-secondary">📋 View All Orders</a>
+                <a href="dashboard-v2.html" class="btn btn-primary"><i class="fa-solid fa-bag-shopping"></i> Continue Shopping</a>
+                <a href="profile-v2.html"   class="btn btn-secondary"><i class="fa-solid fa-list"></i> View All Orders</a>
             </div>
         </div>
     </div>

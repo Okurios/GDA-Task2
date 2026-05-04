@@ -1,4 +1,4 @@
-const API = 'http://localhost:3000/api';
+const API = '/api';
 
 // ─── Show "already logged in" banner (no auto-redirect) ──────────────────────
 const existingToken = localStorage.getItem('gda_token');

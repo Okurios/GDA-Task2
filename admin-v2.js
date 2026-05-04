@@ -1,4 +1,4 @@
-const API   = 'http://localhost:3000/api';
+const API   = '/api';
 const token = localStorage.getItem('gda_token');
 const role  = localStorage.getItem('gda_role') || 'user';
 
@@ -53,26 +53,30 @@ async function loadProducts() {
         <td>${p.name}</td>
         <td>${p.brand}</td>
         <td>${p.category}</td>
+        <td>${p.gender || 'unisex'}</td>
         <td>€ ${parseFloat(p.price).toFixed(2)}</td>
         <td>${p.sizes || '—'}</td>
         <td>${p.stock ?? '—'}</td>
         <td style="white-space:nowrap;">
-          <button class="btn btn-edit" onclick="editProduct(${p.id},'${esc(p.name)}','${esc(p.brand)}','${p.category}',${p.price},'${esc(p.image||'')}','${esc(p.sizes||'')}',${p.stock||0})">✏️ Edit</button>
-          <button class="btn btn-del"  onclick="deleteProduct(${p.id},'${esc(p.name)}')" style="margin-left:4px;">🗑️</button>
+          <button class="btn btn-edit" onclick="editProduct(${p.id},'${esc(p.name)}','${esc(p.brand)}','${p.category}','${p.gender||'unisex'}',${p.price},'${esc(p.image||'')}','${esc(p.sizes||'')}','${esc(p.colors||'')}',${p.stock||0},'${esc(p.description||'')}')"><i class="fa-solid fa-pen"></i> Edit</button>
+          <button class="btn btn-del"  onclick="deleteProduct(${p.id},'${esc(p.name)}')" style="margin-left:4px;"><i class="fa-solid fa-trash"></i></button>
         </td>
       </tr>`).join('');
   } catch (e) { loading.textContent = '❌ Failed to load products.'; }
 }
 
 function showProductForm() {
-  document.getElementById('pf-id').value       = '';
-  document.getElementById('pf-name').value     = '';
-  document.getElementById('pf-brand').value    = '';
-  document.getElementById('pf-category').value = 'shoes';
-  document.getElementById('pf-price').value    = '';
-  document.getElementById('pf-stock').value    = '100';
-  document.getElementById('pf-image').value    = '';
-  document.getElementById('pf-sizes').value    = '';
+  document.getElementById('pf-id').value          = '';
+  document.getElementById('pf-name').value        = '';
+  document.getElementById('pf-brand').value       = '';
+  document.getElementById('pf-category').value    = 'shoes';
+  document.getElementById('pf-gender').value      = 'unisex';
+  document.getElementById('pf-price').value       = '';
+  document.getElementById('pf-stock').value       = '100';
+  document.getElementById('pf-image').value       = '';
+  document.getElementById('pf-sizes').value       = '';
+  document.getElementById('pf-colors').value      = '';
+  document.getElementById('pf-description').value = '';
   document.getElementById('pf-title').textContent = 'Add New Product';
   document.getElementById('product-form-panel').style.display = 'block';
   document.getElementById('product-form-panel').scrollIntoView({ behavior: 'smooth' });
@@ -82,15 +86,18 @@ function hideProductForm() {
   document.getElementById('product-form-panel').style.display = 'none';
 }
 
-function editProduct(id, name, brand, category, price, image, sizes, stock) {
-  document.getElementById('pf-id').value       = id;
-  document.getElementById('pf-name').value     = name;
-  document.getElementById('pf-brand').value    = brand;
-  document.getElementById('pf-category').value = category;
-  document.getElementById('pf-price').value    = price;
-  document.getElementById('pf-stock').value    = stock;
-  document.getElementById('pf-image').value    = image;
-  document.getElementById('pf-sizes').value    = sizes;
+function editProduct(id, name, brand, category, gender, price, image, sizes, colors, stock, description) {
+  document.getElementById('pf-id').value          = id;
+  document.getElementById('pf-name').value        = name;
+  document.getElementById('pf-brand').value       = brand;
+  document.getElementById('pf-category').value    = category;
+  document.getElementById('pf-gender').value      = gender || 'unisex';
+  document.getElementById('pf-price').value       = price;
+  document.getElementById('pf-stock').value       = stock;
+  document.getElementById('pf-image').value       = image;
+  document.getElementById('pf-sizes').value       = sizes;
+  document.getElementById('pf-colors').value      = colors || '';
+  document.getElementById('pf-description').value = description || '';
   document.getElementById('pf-title').textContent = 'Edit Product #' + id;
   document.getElementById('product-form-panel').style.display = 'block';
   document.getElementById('product-form-panel').scrollIntoView({ behavior: 'smooth' });
@@ -99,13 +106,16 @@ function editProduct(id, name, brand, category, price, image, sizes, stock) {
 async function submitProduct() {
   const id    = document.getElementById('pf-id').value;
   const body  = {
-    name:     document.getElementById('pf-name').value.trim(),
-    brand:    document.getElementById('pf-brand').value.trim(),
-    category: document.getElementById('pf-category').value,
-    price:    document.getElementById('pf-price').value,
-    stock:    document.getElementById('pf-stock').value,
-    image:    document.getElementById('pf-image').value.trim(),
-    sizes:    document.getElementById('pf-sizes').value.trim(),
+    name:        document.getElementById('pf-name').value.trim(),
+    brand:       document.getElementById('pf-brand').value.trim(),
+    category:    document.getElementById('pf-category').value,
+    gender:      document.getElementById('pf-gender').value,
+    price:       document.getElementById('pf-price').value,
+    stock:       document.getElementById('pf-stock').value,
+    image:       document.getElementById('pf-image').value.trim(),
+    sizes:       document.getElementById('pf-sizes').value.trim(),
+    colors:      document.getElementById('pf-colors').value.trim(),
+    description: document.getElementById('pf-description').value.trim(),
   };
   if (!body.name || !body.brand || !body.price) {
     showFormMsg('Name, brand and price are required.', false); return;
@@ -166,7 +176,7 @@ async function loadUsers() {
         ? `<button class="btn btn-gray" onclick="setRole(${u.id},'user')">→ user</button>`
         : `<button class="btn btn-edit" onclick="setRole(${u.id},'admin')">→ admin</button>`);
       const delBtn  = isSelf ? '' :
-        `<button class="btn btn-del" onclick="deleteUser(${u.id},'${esc(u.fullname)}')" style="margin-left:4px;">🗑️</button>`;
+        `<button class="btn btn-del" onclick="deleteUser(${u.id},'${esc(u.fullname)}')" style="margin-left:4px;"><i class="fa-solid fa-trash"></i></button>`;
       return `<tr>
         <td>${u.id}</td>
         <td>${u.fullname}${isSelf ? ' <em style="color:#888;font-size:12px;">(you)</em>' : ''}</td>
@@ -222,18 +232,41 @@ async function loadOrders() {
     const list = await r.json();
     loading.style.display = 'none'; table.style.display = 'table';
 
-    const payIcon = { card:'💳', paypal:'🅿️', cash:'💵' };
+    const payIcon = {
+      card:   '<i class="fa-solid fa-credit-card"></i>',
+      paypal: '<i class="fa-brands fa-paypal"></i>',
+      cash:   '<i class="fa-solid fa-money-bill-wave"></i>'
+    };
+    const delIcon = {
+      standard: '<i class="fa-solid fa-box"></i>',
+      express:  '<i class="fa-solid fa-bolt"></i>',
+      pickup:   '<i class="fa-solid fa-store"></i>'
+    };
 
     tbody.innerHTML = list.map(o => {
       const itemsSummary = o.items
-        .map(i => `${i.product_name}${i.size ? ' ('+i.size+')' : ''} x${i.quantity||1}`)
+        .map(i => {
+          const opts = [i.size, i.color].filter(Boolean).join(', ');
+          return `${i.product_name}${opts ? ' ('+opts+')' : ''} x${i.quantity||1}`;
+        })
         .join('<br>');
+      const addrParts = [o.full_name, o.address, o.city, o.postal_code, o.country].filter(Boolean);
+      const address   = addrParts.length ? addrParts.join(', ') : '—';
+      const phone     = o.phone ? `<i class="fa-solid fa-phone"></i> ${o.phone}` : '';
+      const delivery  = `${delIcon[o.delivery_method]||'📦'} ${o.delivery_method || 'standard'}`;
+      const delFee    = o.delivery_fee > 0 ? ` (+€${parseFloat(o.delivery_fee).toFixed(2)})` : ' (Free)';
+      const cardInfo  = o.payment_method === 'card' && o.card_last4
+        ? `<br><small style="color:#888;">•••• ${o.card_last4}</small>`
+        : o.payment_method === 'paypal' && o.paypal_email
+        ? `<br><small style="color:#888;">${o.paypal_email}</small>` : '';
       return `<tr>
         <td>${o.id}</td>
         <td>${o.fullname}</td>
         <td>${o.email}</td>
-        <td>${payIcon[o.payment_method]||''} ${o.payment_method}</td>
+        <td>${payIcon[o.payment_method]||''} ${o.payment_method}${cardInfo}</td>
+        <td>${delivery}${delFee}</td>
         <td><strong>€ ${parseFloat(o.total).toFixed(2)}</strong></td>
+        <td style="font-size:12px;line-height:1.6;">${address}${phone ? '<br>'+phone : ''}</td>
         <td>${new Date(o.created_at).toLocaleDateString()}</td>
         <td style="font-size:12px;line-height:1.6;">${itemsSummary}</td>
       </tr>`;

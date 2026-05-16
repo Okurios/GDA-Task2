@@ -34,16 +34,6 @@ document.getElementById('forgot-form').addEventListener('submit', async function
     }
 
     showMessage(data.message, false);
-
-    // Show dev link if email isn't configured (server returns devLink)
-    if (data.devLink) {
-      const box  = document.getElementById('dev-link-box');
-      const link = document.getElementById('dev-link');
-      link.href        = data.devLink;
-      link.textContent = data.devLink;
-      box.style.display = 'block';
-    }
-
     btn.disabled    = false;
     btn.textContent = 'Send Reset Link';
 

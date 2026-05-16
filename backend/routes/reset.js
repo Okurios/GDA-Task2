@@ -27,7 +27,8 @@ router.post('/forgot-password', async (req, res) => {
     'INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES (?, ?, ?)'
   ).run(user.id, token, expires);
 
-  const resetLink = `http://localhost:3000/reset-password-v2.html?token=${token}`;
+  const baseUrl   = process.env.APP_URL || 'http://localhost:3000';
+  const resetLink = `${baseUrl}/reset-password-v2.html?token=${token}`;
 
   sendEmail(
     user.email,
@@ -35,8 +36,7 @@ router.post('/forgot-password', async (req, res) => {
     passwordResetEmail(user.fullname, resetLink)
   );
 
-  // Return the link in the response too (handy when Mailtrap isn't configured yet)
-  return res.json({ message: genericMsg, devLink: resetLink });
+  return res.json({ message: genericMsg });
 });
 
 // ─── POST /api/auth/reset-password ───────────────────────────────────────────
